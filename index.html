@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090b16">
+<title>TrufaHub — Hospedagem Lua</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="brand-mark">✦</div><h1>Trufa<span>Hub</span></h1>
+    <p class="muted">Seus scripts Lua, sempre online.</p>
+    <div class="auth-tabs"><button class="active" data-mode="login">Entrar</button><button data-mode="signup">Criar conta</button></div>
+    <form id="authForm">
+      <label>E-mail<input id="email" type="email" autocomplete="email" placeholder="voce@email.com" required></label>
+      <label>Senha<input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="Mínimo de 6 caracteres" required></label>
+      <button class="primary full" id="authSubmit">Entrar no painel</button>
+    </form>
+    <p class="tiny muted">Seus arquivos ficam privados. Só você pode acessá-los, a menos que crie um link temporário.</p>
+    <p id="authMessage" class="message"></p>
+  </div>
+</div>
+<div id="app" class="app hidden">
+  <aside class="sidebar">
+    <a class="brand" href="#"><span class="brand-mark">✦</span><span><b>Trufa<span>Hub</span></b><small>Lua Script Cloud</small></span></a>
+    <nav><button class="nav-item active" data-view="scripts">▦ <span>Meus Scripts</span></button><button class="nav-item" data-view="links">↗ <span>Links compartilhados</span></button><button class="nav-item" data-view="settings">⚙ <span>Configurações</span></button></nav>
+    <div class="storage-card"><div class="storage-title">✦ <b>Plano Free</b></div><div class="storage-line"><span>Arquivos</span><b id="fileCount">0</b></div><div class="progress"><i id="fileProgress"></i></div><div class="storage-line"><span>Armazenamento</span><b id="storageText">0 B</b></div><div class="progress"><i id="storageProgress"></i></div><p>Limites dependem do seu projeto Supabase.</p></div>
+    <div class="sidebar-bottom"><span class="status-dot"></span> Conectado com segurança <button id="logoutBtn" class="logout">Sair</button></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><span class="eyebrow">ESPAÇO DE TRABALHO</span><h2 id="pageTitle">Meus Scripts</h2></div><div class="user-chip"><div class="avatar">T</div><div><b id="userEmail">Sua conta</b><small>Plano gratuito</small></div></div></header>
+    <section id="scriptsView">
+      <div class="welcome"><div class="welcome-icon">◈</div><div><h3>Seu código, do seu jeito.</h3><p>Faça upload, edite e compartilhe seus arquivos Lua com segurança.</p></div><div class="welcome-orb"></div></div>
+      <div class="upload-zone" id="dropZone"><div class="upload-symbol">⇧</div><div class="upload-copy"><b>Arraste arquivos .lua para cá</b><span>ou clique para selecionar · até 10 MB por arquivo</span></div><button class="primary" id="selectFileBtn">Selecionar arquivos</button><input type="file" id="fileInput" accept=".lua,text/plain" multiple hidden></div>
+      <div class="toolbar"><div><h3>Biblioteca <span class="count-pill" id="listCount">0</span></h3><p class="muted">Seus scripts hospedados na nuvem</p></div><div class="toolbar-actions"><input id="searchInput" class="search" placeholder="⌕  Buscar scripts..."><select id="sortSelect"><option value="new">Mais recentes</option><option value="name">Nome A–Z</option><option value="size">Maior tamanho</option></select></div></div>
+      <div id="scriptList" class="script-list"><div class="empty"><div>⌘</div><h3>Nenhum script por aqui ainda</h3><p>Envie seu primeiro arquivo .lua para começar.</p></div></div>
+    </section>
+    <section id="linksView" class="hidden"><div class="section-card"><h3>Links compartilhados</h3><p class="muted">Crie links temporários para compartilhar um script sem torná-lo público permanentemente.</p><div id="shareList" class="share-list"><p class="muted">Os links criados nesta sessão aparecem aqui.</p></div></div></section>
+    <section id="settingsView" class="hidden"><div class="section-card"><h3>Configurações da conta</h3><div class="settings-row"><div><b>Conta</b><p class="muted" id="settingsEmail">—</p></div></div><div class="settings-row"><div><b>Privacidade padrão</b><p class="muted">Todos os arquivos ficam em um bucket privado. Os links compartilhados expiram.</p></div><span class="secure-badge">● Privado</span></div><div class="settings-row"><div><b>Projeto conectado</b><p class="muted" id="projectStatus">Verificando configuração…</p></div></div><button class="danger" id="settingsLogout">Sair da conta</button></div></section>
+    <footer>TrufaHub <span>•</span> Feito para organizar seus scripts Lua</footer>
+  </main>
+</div>
+<div id="editorModal" class="modal hidden">
+ <div class="modal-backdrop" data-close="editor"></div><div class="editor-panel">
+  <div class="editor-header"><div><span class="file-icon">‹/›</span><div><b id="editorFilename">script.lua</b><small id="editorMeta">Editor Lua</small></div></div><button class="icon-button" data-close="editor">✕</button></div>
+  <textarea id="codeEditor" spellcheck="false" aria-label="Código Lua" placeholder="-- Escreva seu código Lua aqui"></textarea>
+  <div class="editor-footer"><span id="editorStatus">Lua · UTF-8</span><div><button class="secondary" data-close="editor">Cancelar</button><button class="primary" id="saveScriptBtn">Salvar alterações</button></div></div>
+ </div>
+</div>
+<div id="shareModal" class="modal hidden">
+ <div class="modal-backdrop" data-close="share"></div><div class="dialog"><button class="icon-button close-dialog" data-close="share">✕</button><div class="dialog-icon">↗</div><h3>Compartilhar script</h3><p class="muted">O link assinado dá acesso de leitura até expirar. O arquivo continua privado.</p><label>Expira em<select id="shareExpiry"><option value="3600">1 hora</option><option value="86400" selected>24 horas</option><option value="604800">7 dias</option></select></label><button class="primary full" id="createShareBtn">Gerar link temporário</button><div id="shareResult" class="share-result hidden"><input id="shareUrl" readonly><button class="secondary" id="copyShareBtn">Copiar</button></div><p id="shareMessage" class="message"></p></div>
+</div>
+<div id="toast" class="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body></html>
